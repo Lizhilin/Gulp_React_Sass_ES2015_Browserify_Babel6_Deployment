@@ -7,7 +7,8 @@ var gulp =  require('gulp'),
     reactify = require('reactify'),
     streamify = require('streamify'),
     htmlmin = require('gulp-htmlmin'),
-    concat = require('gulp-concat'),
+    concat = require('gulp-concat'),//文件合并
+	compass = require('gulp-compass'),
     buffer = require('gulp-buffer'),
     jshint = require('gulp-jshint'),
     minifyCss = require('gulp-minify-css'),
@@ -58,9 +59,14 @@ gulp.task('htmlmin', function(){
 // 编译SASS并压缩
 gulp.task('sass', function(){
 	gulp.src(path.SASS)
-		.pipe(sass())
-		.pipe(concat(filename.CSS))
-		.pipe(minifyCss())
+		.pipe(compass({//这里的compass设置会覆盖config.rb
+			config_file: './config.rb',
+			css: './build/css',
+			sass: './front/css'
+		}))
+		//.pipe(sass())
+		.pipe(concat(filename.CSS))//合并
+		//.pipe(minifyCss())
 		.pipe(autoprefixer())
 		.pipe(rename({suffix: '.min'}))
 		.pipe(gulp.dest(path.DEST_CSS))
@@ -147,7 +153,7 @@ gulp.task('watch', function(){
 		server: {
 			baseDir: './build'
 		},
-		browser:['chrome'],
+		//browser:['chrome'],
 		port: '8189',
 	});
 	gulp.watch([path.CLEAN]).on('change', browserSync.reload);
